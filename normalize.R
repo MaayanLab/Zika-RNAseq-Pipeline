@@ -31,9 +31,9 @@ d <- DGEList(counts=count.mat)
 d$genes$Length <- gene.lengths
 rpkm.mat <- rpkm(d)
 rownames(rpkm.mat) <- genes
-write.csv(rpkm.mat, file="repRpkmMatrix_featureCounts.csv")
+write.csv(rpkm.mat, file="repRpkmMatrix_featureCounts.csv", row.names=T)
 
 ## Calculate CPM
 cpm.mat <- cpm(d)
 rownames(cpm.mat) <- genes
-write.csv(cpm.mat, file="repCpmMatrix_featureCounts.csv")
+write.csv(cpm.mat, file="repCpmMatrix_featureCounts.csv", row.names=T)
