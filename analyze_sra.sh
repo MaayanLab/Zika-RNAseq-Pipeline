@@ -13,10 +13,17 @@ cd $WORKDIR
 # mkdir fastqs
 # mkdir star_output
 # mkdir featureCount_output
-# ## dump .sra to .fastq
-# for sra in $(ls SRR*/*.sra); do
+# mkdir paired_fastqs
+## dump .sra to .fastq
+# for sra in $(ls SINGLE/SRR*/*.sra); do
 # 	echo $sra
 # 	$SRA_BIN$cmd_name -O fastqs $sra
+# done
+
+## Note that paired-end sequencing reads should be dumped with different params
+# for sra in $(ls PAIRED/SRR*/*.sra); do
+# 	echo $sra
+# 	$SRA_BIN$cmd_name -I --split-files -O paired_fastqs $sra
 # done
 
 ## make star index
@@ -28,10 +35,43 @@ cd $WORKDIR
 #     --sjdbGTFfile /home/maayanlab/Zika/Homo_sapiens/UCSC/hg19/Annotation/Genes/genes.gtf \
 #     --sjdbOverhang 100
 
-cd fastqs
-for fq in $(ls); do
-	basename=$(echo $fq | cut -f1 -d '.')
+# cd fastqs
+# for fq in $(ls); do
+# 	basename=$(echo $fq | cut -f1 -d '.')
+# 	echo $basename
+# 	STAR \
+# 		--genomeDir $STAR_INDEX \
+# 		--sjdbGTFfile $GENOME_GTF \
+# 		--runThreadN 8 \
+# 		--outSAMstrandField intronMotif \
+# 		--outFilterIntronMotifs RemoveNoncanonical \
+# 		--outFileNamePrefix $WORKDIR/star_output/$basename \
+# 		--readFilesIn $fq \
+# 		--outSAMtype BAM SortedByCoordinate \
+# 		--outReadsUnmapped Fastx \
+# 		--outSAMmode Full
+
+# 	suffix="Aligned.sortedByCoord.out.bam"
+# 	outname="$basename.count.txt"
+# 	bam="$WORKDIR/star_output/$basename$suffix"
+# 	$featureCounts \
+# 		-T 8 \
+# 		-t exon \
+# 		-g gene_id \
+# 		-a $GENOME_GTF \
+# 		-o $WORKDIR/featureCount_output/$outname \
+# 		$bam
+# done
+
+
+cd paired_fastqs
+for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	echo $basename
+	fq1="_1.fastq"
+	fq2="_2.fastq"
+	fq1=$basename$fq1
+	fq2=$basename$fq2
+
 	STAR \
 		--genomeDir $STAR_INDEX \
 		--sjdbGTFfile $GENOME_GTF \
@@ -39,7 +79,7 @@ for fq in $(ls); do
 		--outSAMstrandField intronMotif \
 		--outFilterIntronMotifs RemoveNoncanonical \
 		--outFileNamePrefix $WORKDIR/star_output/$basename \
-		--readFilesIn $fq \
+		--readFilesIn $fq1 $fq2 \
 		--outSAMtype BAM SortedByCoordinate \
 		--outReadsUnmapped Fastx \
 		--outSAMmode Full
