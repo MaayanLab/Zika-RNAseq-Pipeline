@@ -18,8 +18,8 @@ for (fn in fns) {
 	}
 }
 
-write.csv(counts.df, file='featureCounts_matrix.txt', row.names=F)
-write.csv(lengths.df, file='featureCounts_gene_lengths.txt', row.names=F)
+write.csv(counts.df, file='featureCounts_matrix.csv', row.names=F)
+write.csv(lengths.df, file='featureCounts_gene_lengths.csv', row.names=F)
 
 genes <- as.vector(counts.df[[1]])
 gene.lengths <- lengths.df[[2]]
