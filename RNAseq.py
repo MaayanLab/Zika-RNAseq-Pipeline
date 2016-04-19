@@ -5,7 +5,6 @@ import xlwt
 import random
 random.seed(0)
 import numpy as np
-import networkx as nx
 import openpyxl as px
 import cookielib, poster, urllib2
 import requests, json
@@ -82,28 +81,6 @@ def enrichr_term_score(genes, meta='', gmt=''):
 		combined_score = res[4]
 		terms_scores.append((term, combined_score))
 	return terms_scores
-
-def enrichr_gene_term_network(genes, meta='', gmt_terms=None):
-	"""
-	return a Graph of terms and genes
-	gmt_terms: {'gmt':[terms]}, e.g. {'ChEA', ['SUZ12-18974828-MESC-MOUSE']}
-	"""
-	G = nx.Graph()
-	for gmt, terms in gmt_terms.items():
-		res = enrichr_result(genes, meta=meta, gmt=gmt)
-		terms_in_res = [line[1] for line in res[gmt]]
-		idx = [terms_in_res.index(term) for term in terms]
-		for i in idx:	
-			line = res[gmt][i]
-			term = line[1]
-			genes_overlap = line[5]
-			for gene in genes_overlap:
-				G.add_edge(term, gene)
-				G.node[term]['type'] = gmt
-	for n in G.nodes():
-		if n in genes:
-			G.node[n]['type'] = 'gene'
-	return G
 
 def cds2_link(chdir, meta='', aggravate=True):
 	'''Use L1000CDS2 API to get a link for results'''
