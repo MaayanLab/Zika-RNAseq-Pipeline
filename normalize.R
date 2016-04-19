@@ -1,21 +1,21 @@
-setwd('/Users/zichen/Documents/Zichen_Projects/Zika')
+setwd('../')
 library(edgeR)
 
 fns <- system2('ls', args = 'featureCount_output/*.txt', stdout = T)
 counts.df <- NULL
 lengths.df <- NULL
 for (fn in fns) {
-		df <- read.table(fn, check.names=F, sep='\t', header=T)
-		df <- subset(df, select=-c(Chr, Start, End, Strand)) # drop unwanted columns
-    colnames(df)[3] <- strsplit(basename(fn), '\\.')[[1]][1] # beautify sample name
-		if (is.null(counts.df)) {
-      lengths.df <- subset(df, select=c(Geneid, Length))
-		  df <- subset(df, select=-c(Length))
-			counts.df <- df
-		} else {
-		  df <- subset(df, select=-c(Length))
-			counts.df <- merge(counts.df, df, by="Geneid", all.x=T, sort=F)
-		}
+	df <- read.table(fn, check.names=F, sep='\t', header=T)
+	df <- subset(df, select=-c(Chr, Start, End, Strand)) # drop unwanted columns
+	colnames(df)[3] <- strsplit(basename(fn), '\\.')[[1]][1] # beautify sample name
+	if (is.null(counts.df)) {
+		lengths.df <- subset(df, select=c(Geneid, Length))
+		df <- subset(df, select=-c(Length))
+		counts.df <- df
+	} else {
+		df <- subset(df, select=-c(Length))
+		counts.df <- merge(counts.df, df, by="Geneid", all.x=T, sort=F)
+	}
 }
 
 write.csv(counts.df, file='featureCounts_matrix.txt', row.names=F)
