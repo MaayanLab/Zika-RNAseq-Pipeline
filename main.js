@@ -1,9 +1,9 @@
 var params =  {
   // 'x': 30,
   // 'y': 50,
-  'line-width': 3,
-  'line-length': 40,
-  'text-margin': 10,
+  'line-width': 2,
+  'line-length': 0.01,
+  'text-margin': 3,
   'font-size': 14,
   'font': 'normal',
   'font-family': 'Helvetica',
@@ -15,7 +15,7 @@ var params =  {
   'yes-text': 'yes',
   'no-text': 'no',
   'arrow-end': 'block',
-  'scale': 1,
+  'scale': 0.9,
   'symbols': {
     'inputoutput': {
       'font-color': 'red',
@@ -23,13 +23,16 @@ var params =  {
       'fill': 'yellow'
     },
     'operation':{
-      'fill': 'steelblue'
+      'fill': 'lightblue'
+    },
+    'condition':{
+      'line-length': 10,
     }
   },
   'flowstate' : {
-    'analysis' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'visualize', 'no-text' : 'differential expression' },
-    'degs' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'enrich against\ngene sets', 'no-text' : 'search for\nsmall molecules' },
-    'visualization' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'static', 'no-text' : 'interactive' }
+    'analysis' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : '\nvisualize', 'no-text' : '\ndifferential expression' },
+    'degs' : {'line-length':60,  'fill' : '#C45879', 'font-size' : 12, 'yes-text' : '\nenrich against\ngene sets', 'no-text' : 'search for\nsmall molecules' },
+    'visualization' : {'line-length':30, 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : '\nstatic', 'no-text' : '\ninteractive' }
   }
 };
 

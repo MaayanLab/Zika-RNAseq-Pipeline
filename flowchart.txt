@@ -27,7 +27,7 @@ opPCA=>operation: PCA plot
 opClt=>operation: Clustergrammer
 
 
-ioGEO(right)->ioSRA->op1->ioSRAfile->opFD->ioFq->opSTAR->ioBam->opFC->ioGeneCount->opEdger->ioCPM->analysis
+ioGEO(right)->ioSRA(right)->op1(right)->ioSRAfile->opFD->ioFq->opSTAR->ioBam->opFC->ioGeneCount->opEdger->ioCPM->analysis
 analysis(yes, right)->vis(right)
 vis(yes)->opPCA
 vis(no)->opClt(left)
