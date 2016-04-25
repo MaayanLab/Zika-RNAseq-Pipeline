@@ -43,7 +43,21 @@ $(document).ready(function() {
         success : function(data) {
             var chart = flowchart.parse(data);
             chart.drawSVG('canvas', params);
+            
+            $("#save-svg").click(function(){
+              // save svg: example from: http://bl.ocks.org/pgiraud/8955139#profile.json
+              var html = d3.select("svg")
+                    // .attr("title", "test2")
+                    // .attr("version", 1.1)
+                    // .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .node().parentNode.innerHTML;        
+              var blob = new Blob([html], {type: "image/svg+xml"});
+              saveAs(blob, "flowchart.svg");
+
+            })
         }
     });
 });
+
+
 
