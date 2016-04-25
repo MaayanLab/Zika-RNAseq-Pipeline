@@ -352,9 +352,8 @@ def manifold_plot(man, fpkmMatrix, samples, standardize=3, log=True, show_text=F
 
 	return
 
-def PCA_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep='_', legend_loc='best', legend_size=14):
-	# standardize: whether to a zscore transformation on the log10 transformed FPKM
-	pca = PCA(n_components=None)
+
+def perform_PCA(fpkmMatrix, standardize=3, log=True):
 	## preprocessing of the fpkmMatrix
 	if log:
 		fpkmMatrix = np.log10(fpkmMatrix + 1.)
@@ -365,13 +364,22 @@ def PCA_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep=
 
 	## remove genes with NaNs
 	fpkmMatrix = fpkmMatrix[~np.isnan(np.sum(fpkmMatrix, axis=1))]
+
+	pca = PCA(n_components=None)
 	## get variance captured
 	pca.fit(fpkmMatrix.T)
 	variance_explained = pca.explained_variance_ratio_[0:3]
 	variance_explained *= 100
 	## compute PCA and plot
-	pca = PCA(n_components=2)
-	pca_transformed = pca.fit_transform(fpkmMatrix.T)
+	pca_transformed = pca.transform(fpkmMatrix.T)
+	return variance_explained, pca_transformed
+
+
+def PCA_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep='_', legend_loc='best', legend_size=14):
+	# standardize: whether to a zscore transformation on the log10 transformed FPKM
+	## perform PCA
+	variance_explained, pca_transformed = perform_PCA(fpkmMatrix, standardize=standardize, log=log)
+
 	fig = plt.figure(figsize=(8,8))
 	ax = fig.add_subplot(111)
 	scatter_proxies = []
