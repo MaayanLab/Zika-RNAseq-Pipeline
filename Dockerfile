@@ -7,7 +7,7 @@ ADD . /notebook
 WORKDIR /notebook
 
 # Install additional python packages
-RUN pip install -r requirements.txt 
+RUN pip2 install -r requirements.txt 
 
 # Install wget
 RUN apt-get install -y wget
@@ -37,5 +37,7 @@ RUN tar zxvf subread-1.4.6-p2-Linux-x86_64.tar.gz
 # Expose port
 EXPOSE 8888
 
+ADD notebook.sh /
+
 # Start notebook server
-RUN bash notebook.sh
+CMD ["/notebook.sh"]

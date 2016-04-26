@@ -1,4 +1,6 @@
 openpyxl == 2.2.5
 xlwt == 1.0.0
+xlrd
 plotly == 1.9.9
 poster == 0.5
+-e git://github.com/wangz10/geode.git#egg=geode
