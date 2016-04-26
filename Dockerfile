@@ -38,4 +38,4 @@ RUN tar zxvf subread-1.4.6-p2-Linux-x86_64.tar.gz
 EXPOSE 8888
 
 # Start notebook server
-CMD ["/notebook.sh"]
+RUN bash notebook.sh
