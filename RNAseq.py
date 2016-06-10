@@ -1,14 +1,15 @@
 # utils for RNAseq
-import sys
+import sys, json
 from time import sleep
-import xlwt
 import random
 random.seed(0)
+from collections import OrderedDict
+
 import numpy as np
 import openpyxl as px
-import cookielib, poster, urllib2
-import requests, json
-from collections import OrderedDict
+import xlwt
+import requests
+
 from sklearn.decomposition import PCA
 from sklearn import manifold
 from scipy.stats.mstats import zscore
@@ -24,52 +25,46 @@ rcParams['font.sans-serif'] = 'Arial'
 
 from plots import (COLORS10, COLORS20, COLORS20b, enlarge_tick_fontsize)
 
-global baseurl
-baseurl = 'amp.pharm.mssm.edu'
+ENRICHR_URL = 'http://amp.pharm.mssm.edu/Enrichr'
+
+def _enrichr_add_list(genes, meta=''):
+	"""POST a gene list to Enrichr server and return the list ids"""
+	genes_str = '\n'.join(genes)
+	payload = {
+		'list': (None, genes_str),
+		'description': (None, meta)
+	}
+	# POST genes to the /addList endpoint
+	response = requests.post("%s/addList" % ENRICHR_URL, files=payload)
+	list_ids = json.loads(response.text)
+	return list_ids
+
 
 def enrichr_link(genes, meta=''):
-	"""post a gene list to enrichr server and get the link."""
-	cj = cookielib.CookieJar()
-	opener = poster.streaminghttp.register_openers()
-	opener.add_handler(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
-	genesStr = '\n'.join(genes)
-
-	params = {'list':genesStr,'description':meta}
-	datagen, headers = poster.encode.multipart_encode(params)
-	url = "http://" + baseurl + "/Enrichr/enrich"
-	request = urllib2.Request(url, datagen, headers)
-	urllib2.urlopen(request)
-
-	sleep(2)
-
-	x = urllib2.urlopen("http://" + baseurl + "/Enrichr/share")
-	response = x.read()
-	split_strings = response.split('"')
-	linkID = split_strings[3]
-	share_url_head = "http://" + baseurl + "/Enrichr/enrich?dataset="
-	link = share_url_head + linkID
+	"""POST a gene list to Enrichr server and get the link."""
+	list_ids = _enrichr_add_list(genes, meta)
+	shortId = list_ids['shortId']
+	link = '%s/enrich?dataset=%s' % (ENRICHR_URL, shortId)
 	return link
 
+
 def enrichr_result(genes, meta='', gmt=''):
-	"""return the enrichment results for a specific gene-set library on Enrichr"""
-	cj = cookielib.CookieJar()
-	opener = poster.streaminghttp.register_openers()
-	opener.add_handler(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
-	genesStr = '\n'.join(genes)
+	"""POST the genes to Enrichr and return the enrichment results 
+	for a specific gene-set library on Enrichr"""
+	list_ids = _enrichr_add_list(genes, meta)
+	# GET from the /export endpoint
+	query_string = '?userListId=%s&backgroundType=%s' % \
+		(list_ids['userListId'], gmt)
 
-	params = {'list':genesStr,'description':meta}
-	datagen, headers = poster.encode.multipart_encode(params)
+	url = '%s/enrich%s' % (ENRICHR_URL, query_string)
+	sleep(2)
 
-	url = "http://" + baseurl + "/Enrichr/enrich"
-	request = urllib2.Request(url, datagen, headers)
-	urllib2.urlopen(request)
-	
-	sleep(2) ## for some reason it works
-
-	x = urllib2.urlopen("http://" + baseurl + "/Enrichr/enrich?backgroundType=" + gmt)
-	response = x.read()
-	response_dict = json.loads(response)
-	return response_dict
+	response = requests.get(url)
+	if response.status_code == 200:
+		results = json.loads(response.text)
+		return results
+	else:
+		raise Exception('HTTP reponse code=%s' % response.status_code)
 
 
 def enrichr_term_score(genes, meta='', gmt=''):
