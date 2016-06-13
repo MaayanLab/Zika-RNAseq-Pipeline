@@ -1,4 +1,4 @@
-setwd('../')
+setwd('data/')
 library(edgeR)
 
 fns <- system2('ls', args = 'featureCount_output/*.txt', stdout = T)
@@ -18,6 +18,8 @@ for (fn in fns) {
 	}
 }
 
+cat('Finished reading featureCount into data.frame with shape: ', dim(counts.df) )
+
 write.csv(counts.df, file='featureCounts_matrix.csv', row.names=F)
 write.csv(lengths.df, file='featureCounts_gene_lengths.csv', row.names=F)
 
@@ -32,8 +34,10 @@ d$genes$Length <- gene.lengths
 rpkm.mat <- rpkm(d)
 rownames(rpkm.mat) <- genes
 write.csv(rpkm.mat, file="repRpkmMatrix_featureCounts.csv", row.names=T)
+cat('\nRPKM matrix written to "repRpkmMatrix_featureCounts.csv"')
 
 ## Calculate CPM
 cpm.mat <- cpm(d)
 rownames(cpm.mat) <- genes
 write.csv(cpm.mat, file="repCpmMatrix_featureCounts.csv", row.names=T)
+cat('\nCPM matrix file written to "repCpmMatrix_featureCounts.csv"')
