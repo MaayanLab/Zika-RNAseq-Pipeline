@@ -13,6 +13,7 @@ cd $WORKDIR
 ## create dirs
 mkdir fastqs
 mkdir paired_fastqs
+mkdir fastQC_output
 mkdir star_output
 mkdir featureCount_output
 
@@ -42,6 +43,9 @@ cd fastqs
 for fq in $(ls); do
 	basename=$(echo $fq | cut -f1 -d '.')
 	echo $basename
+
+	fastqc $fq -o fastQC_output
+
 	STAR \
 		--genomeDir $STAR_INDEX \
 		--sjdbGTFfile $GENOME_GTF \
@@ -74,6 +78,9 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	fq2="_2.fastq"
 	fq1=$basename$fq1
 	fq2=$basename$fq2
+
+	fastqc $fq1 -o fastQC_output
+	fastqc $fq2 -o fastQC_output
 
 	STAR \
 		--genomeDir $STAR_INDEX \

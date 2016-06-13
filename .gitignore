@@ -2,3 +2,5 @@
 .ipynb_checkpoints
 .Rhistory
 *.tar.gz
+genomes/
+data/
