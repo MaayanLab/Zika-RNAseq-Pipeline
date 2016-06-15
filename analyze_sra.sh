@@ -1,13 +1,17 @@
 #!/bin/bash
 WORKDIR='data/'
+cd $WORKDIR
 
 ## paths relative to WORKDIR
 GENOME='../genomes/Homo_sapiens/UCSC/hg19'
-GENOME_GTF="$GENOME/Annotation/Genes/genes.gtf"
-GENOME_FA="$GENOME/Sequence/WholeGenomeFasta/genome.fa"
-STAR_INDEX="$GENOME/star/STAR_2.4.1c/"
+## absolute path for reference genome files
+GENOME_GTF=$(readlink -e "$GENOME/Annotation/Genes/genes.gtf")
+GENOME_FA=$(readlink -e "$GENOME/Sequence/WholeGenomeFasta/genome.fa")
+STAR_INDEX=$(readlink -e "$GENOME/star/STAR_2.4.1c/")
+## detect number of CPUs and use min(N_CPUS, 8) for jobs
+N_CPUS=$(nproc)
+N_CPUS=$(($N_CPUS>8?8:$N_CPUS))
 
-cd $WORKDIR
 
 ## create dirs
 mkdir fastqs
@@ -33,7 +37,7 @@ done
 if [ ! -d $STAR_INDEX ]; then
 	echo "STAR index does not exist, building STAR index"
 	STAR \
-		--runThreadN 8 \
+		--runThreadN $N_CPUS \
 		--runMode genomeGenerate \
 		--genomeDir $STAR_INDEX \
 		--genomeFastaFiles $GENOME_FA \
@@ -48,15 +52,15 @@ for fq in $(ls); do
 	basename=$(echo $fq | cut -f1 -d '.')
 	echo $basename
 
-	fastqc $fq -o fastQC_output
+	fastqc $fq -o ../fastQC_output
 
 	STAR \
 		--genomeDir $STAR_INDEX \
 		--sjdbGTFfile $GENOME_GTF \
-		--runThreadN 8 \
+		--runThreadN $N_CPUS \
 		--outSAMstrandField intronMotif \
 		--outFilterIntronMotifs RemoveNoncanonical \
-		--outFileNamePrefix $WORKDIR/star_output/$basename \
+		--outFileNamePrefix ../star_output/$basename \
 		--readFilesIn $fq \
 		--outSAMtype BAM SortedByCoordinate \
 		--outReadsUnmapped Fastx \
@@ -64,18 +68,18 @@ for fq in $(ls); do
 
 	suffix="Aligned.sortedByCoord.out.bam"
 	outname="$basename.count.txt"
-	bam="$WORKDIR/star_output/$basename$suffix"
+	bam="../star_output/$basename$suffix"
 	featureCounts \
-		-T 8 \
+		-T $N_CPUS \
 		-t exon \
 		-g gene_id \
 		-a $GENOME_GTF \
-		-o $WORKDIR/featureCount_output/$outname \
+		-o ../featureCount_output/$outname \
 		$bam
 done
 
 ## align and assemble paired-end sequencing reads
-cd paired_fastqs
+cd ../paired_fastqs
 for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	echo $basename
 	fq1="_1.fastq"
@@ -83,13 +87,13 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	fq1=$basename$fq1
 	fq2=$basename$fq2
 
-	fastqc $fq1 -o fastQC_output
-	fastqc $fq2 -o fastQC_output
+	fastqc $fq1 -o ../fastQC_output
+	fastqc $fq2 -o ../fastQC_output
 
 	STAR \
 		--genomeDir $STAR_INDEX \
 		--sjdbGTFfile $GENOME_GTF \
-		--runThreadN 8 \
+		--runThreadN $N_CPUS \
 		--outSAMstrandField intronMotif \
 		--outFilterIntronMotifs RemoveNoncanonical \
 		--outFileNamePrefix $WORKDIR/star_output/$basename \
@@ -102,7 +106,7 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	outname="$basename.count.txt"
 	bam="$WORKDIR/star_output/$basename$suffix"
 	featureCounts \
-		-T 8 \
+		-T $N_CPUS \
 		-t exon \
 		-g gene_id \
 		-a $GENOME_GTF \
