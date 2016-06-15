@@ -1,3 +1,6 @@
 genomes/*
 data/*
 *.pyc
+.ipynb_checkpoints
+.Rhistory
+deploy.json
