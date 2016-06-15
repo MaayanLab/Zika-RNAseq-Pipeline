@@ -11,7 +11,7 @@ To view the IPython notebook with richer display, click [here](http://nbviewer.j
 We have created a Docker image ([maayanlab/zika](https://hub.docker.com/r/maayanlab/zika/)) packaging all the dependencies (command line tools, R and Python packages) for the pipeline, which is publically available on [Dockerhub](https://hub.docker.com/). There are several options to run the Docker image:
 
 1. From our server
-	We have deployed the Docker image on our [Mesos](http://mesos.apache.org/) cluster available at: http://isabella.1425mad.mssm.edu:31413/.
+	We have deployed the Docker image on our [Mesos](http://mesos.apache.org/) cluster available at: http://isabella.1425mad.mssm.edu:31516/.
 
 2. On your local machine
 	1. Through command line
