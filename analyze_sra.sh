@@ -96,7 +96,7 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 		--runThreadN $N_CPUS \
 		--outSAMstrandField intronMotif \
 		--outFilterIntronMotifs RemoveNoncanonical \
-		--outFileNamePrefix $WORKDIR/star_output/$basename \
+		--outFileNamePrefix ../star_output/$basename \
 		--readFilesIn $fq1 $fq2 \
 		--outSAMtype BAM SortedByCoordinate \
 		--outReadsUnmapped Fastx \
@@ -104,12 +104,12 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 
 	suffix="Aligned.sortedByCoord.out.bam"
 	outname="$basename.count.txt"
-	bam="$WORKDIR/star_output/$basename$suffix"
+	bam="../star_output/$basename$suffix"
 	featureCounts \
 		-T $N_CPUS \
 		-t exon \
 		-g gene_id \
 		-a $GENOME_GTF \
-		-o $WORKDIR/featureCount_output/$outname \
+		-o ../featureCount_output/$outname \
 		$bam
 done

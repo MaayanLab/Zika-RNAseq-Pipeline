@@ -4,3 +4,4 @@
 *.tar.gz
 genomes/
 data/
+*.log
