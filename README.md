@@ -26,13 +26,17 @@ We have created a Docker image ([maayanlab/zika](https://hub.docker.com/r/maayan
 			```
 		4. Get the IP of your Docker machine:   
 			```
+			$ docker-machine ip
+			```
+			use `boot2docker` if you are using an earlier version of Docker initiated by `boot2docker`
+			```
 			$ boot2docker ip
 			```
 		5. Open a browser and go to http://your.docker.ip
 
 	2. Through Graphical User Interface (GUI)
 		1. Install Docker Toolbox following the instructions [here](https://www.docker.com/products/docker-toolbox) 
-		2. Open Kitematic
+		2. Open [Kitematic](https://www.docker.com/products/docker-kitematic)
 		3. Search for maayanlab/zika in the search box and download the Docker image
 		4. Set the following variables under the 'Setting' tab:
 			+ Environment Varables: 
