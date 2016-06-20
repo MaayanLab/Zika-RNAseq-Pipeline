@@ -1,5 +1,7 @@
 FROM ipython/scipystack
 
+MAINTAINER Zichen Wang <zichen.wang@mssm.edu>
+
 # Copy the application folder inside the container
 ADD . /notebook
 
@@ -9,19 +11,18 @@ WORKDIR /notebook
 # Install additional python packages
 RUN pip2 install -r requirements.txt 
 
-RUN apt-get update -qq
+# Install wget and unzip
+RUN apt-get update -qq && apt-get install -y \
+	wget \
+	unzip \
+	# Install java for fastQC
+	default-jre \
+	# Install R
+	r-base \
+	r-base-dev \
+&& rm -rf /var/lib/apt/lists/*
 
-# Install wget
-RUN apt-get install -y wget unzip
-
-# Install java for fastQC
-RUN apt-get install -y default-jre
-
-# Install R
-RUN \
-  apt-get install -y r-base r-base-dev && \
-  rm -rf /var/lib/apt/lists/*
-
+# Install R pacakges
 RUN R -e 'source("http://bioconductor.org/biocLite.R"); biocLite("edgeR");'
 
 
