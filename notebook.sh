@@ -26,6 +26,12 @@ else
   CERTFILE_OPTION="--certfile=$PEM_FILE"
 fi
 
-ipython2 notebook --no-browser --port 8888 --ip=* $CERTFILE_OPTION --NotebookApp.password="$HASH" --matplotlib=inline
+ipython2 notebook --no-browser \
+	--port 8888 \
+	--ip=* \
+	--NotebookApp.base_url='zika' \
+	$CERTFILE_OPTION \
+	--NotebookApp.password="$HASH" \
+	--matplotlib=inline
 
 unset HASH
