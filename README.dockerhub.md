@@ -1,16 +1,19 @@
-# RNA-Seq data analysis pipeline: an example of processing a Zika virus study from NCBI's GEO
+# An Open RNA-Seq Data Analysis Pipeline with an Example of Reprocessing Data from a Recent Zika Virus Studyfrom NCBI's GEO
 
 _Zichen Wang_ and _Avi Ma'ayan_
+
+_BD2K-LINCS Data Coordination and Integration Center (DCIC)_
+_Icahn School of Medicine at Mount Sinai, New York, NY 10029 USA_
 
 ## Guide to downloading and running this Docker image
 
 ### Step 1: Install Docker
 
-To download and run this Docker image, you first need to set up Docker on your machine. The easiest way to start with Docker is to install [Docker Toolbox](https://www.docker.com/products/docker-toolbox) by simply downloading and click the installer which is available for both Mac OSX and Windows. For Linux users, follow the instruction [here](https://docs.docker.com/linux/step_one/) to set up Docker on your machine. 
+To download and run this Docker image, you first need to set up Docker on your machine. The easiest way to start with Docker is to install the [Docker Toolbox](https://www.docker.com/products/docker-toolbox) by simply downloading and clicking the installer which is available for both Mac OSX and Windows. For Linux users, follow the instruction [here](https://docs.docker.com/linux/step_one/). 
 
 ### Step 2: Download and run the Docker image
 
-#### Option 1: Through Command Line Interface (CLI)
+#### Option 1: Through a Command Line Interface (CLI)
 
 The image can be downloaded and executed through the CLI of Docker's `Docker Quickstart Terminal` in the [Docker Toolbox](https://www.docker.com/products/docker-toolbox) with the following commands:
 
@@ -26,12 +29,12 @@ The image can be downloaded and executed through the CLI of Docker's `Docker Qui
 	```
 	$ docker-machine ip
 	```
-4. Open a browser and go to http://your.docker-machine.ip and enter the password you set to run the RNA-seq pipeline. 
+4. Open a browser and go to http://your.docker-machine.ip and enter the password you set to run the RNA-Seq pipeline. 
 
-More detailed instructions on how to open the Docker Quickstart Terminal is available for [Mac OSX](https://docs.docker.com/mac/step_one/) and [Windows](https://docs.docker.com/windows/step_one/).
+More detailed instructions on how to open the Docker Quickstart Terminal are available for [Mac OSX](https://docs.docker.com/mac/step_one/) and [Windows](https://docs.docker.com/windows/step_one/).
 
 
-#### Option 2: Through Graphical User Interface (GUI)
+#### Option 2: Through the Graphical User Interface (GUI)
 
 1. Open [Kitematic](https://www.docker.com/products/docker-kitematic)
 2. Search for maayanlab/zika in the search box and download the Docker image
@@ -44,5 +47,5 @@ More detailed instructions on how to open the Docker Quickstart Terminal is avai
 
 ## Deploy this Docker image onto your cloud
 
-You can downloand and deploy this Docker with your cloud provider such as [Amazon Web Services](https://www.docker.com/aws), [HP Enterprise](https://www.docker.com/aws), [IBM](https://www.docker.com/IBM), [Microsoft Azure Cloud](https://www.docker.com/microsoft) and etc.
+You can download and deploy this Docker image with your cloud provider such as [Amazon Web Services](https://www.docker.com/aws), [HP Enterprise](https://www.docker.com/aws), [IBM](https://www.docker.com/IBM), [Microsoft Azure Cloud](https://www.docker.com/microsoft) or others.
 

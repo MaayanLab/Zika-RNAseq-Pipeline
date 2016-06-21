@@ -1,6 +1,9 @@
-# RNA-Seq data analysis pipeline: an example of processing a Zika virus study from NCBI's GEO
+# An Open RNA-Seq Data Analysis Pipeline with an Example of Reprocessing Data from a Recent Zika Virus Studyfrom NCBI's GEO
 
 _Zichen Wang_ and _Avi Ma'ayan_
+
+_BD2K-LINCS Data Coordination and Integration Center (DCIC)_
+_Icahn School of Medicine at Mount Sinai, New York, NY 10029 USA_
 
 ## Browse the notebook
 
@@ -45,5 +48,5 @@ We have created a Docker image ([maayanlab/zika](https://hub.docker.com/r/maayan
 			+ Docker port: 8888
 		5. Click 'START' then click the maximize button on the top right corner of 'WEB PREVIEW'
 
-3. Deploy with your cloud provider such as [Amazon Web Services](https://www.docker.com/aws), [HP Enterprise](https://www.docker.com/aws), [IBM](https://www.docker.com/IBM), [Microsoft Azure Cloud](https://www.docker.com/microsoft) and etc.
+3. Deploy with your cloud provider such as [Amazon Web Services](https://www.docker.com/aws), [HP Enterprise](https://www.docker.com/aws), [IBM](https://www.docker.com/IBM), [Microsoft Azure Cloud](https://www.docker.com/microsoft) or others.
 
