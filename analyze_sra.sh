@@ -3,22 +3,35 @@
 # .sra files are located in SRR*/SRR*.sra relative to WORKDIR.
 
 ########## Step 0: check command line args and make sure files exist ##########
-## Parse command line args
-OPTIND=1
 ## Initialize variables with default values:
 WORKDIR="data/"
 GENOME="$HOME/genomes/Homo_sapiens/UCSC/hg19"
-while getopts "hgw:" opt; do
-	case "$opt" in
-		h)  echo "Usage: ./analyze_sra.sh -g <GENOME> -w <WORKDIR>"
-			exit
-			;;
-		g)  GENOME=$OPTARG
-			;;
-		w)  WORKDIR=$OPTARG
-			;;
+## Parse command line args
+while [[ $# -gt 0 ]]; do
+	key="$1"
+	case $key in
+		-g|--genome)
+		GENOME="$2"
+		shift # past argument
+		;;
+		-w|--workdir)
+		WORKDIR="$2"
+		shift # past argument
+		;;
+		-h|--help)
+		echo "Usage: ./analyze_sra.sh -g <GENOME> -w <WORKDIR>"
+		exit
+		;;
+		*)
+		# unknown option
+		echo "Unknown option: $key, exiting."
+		echo "Usage: ./analyze_sra.sh -g <GENOME> -w <WORKDIR>"
+		exit
+		;;
 	esac
+	shift # past argument or value  
 done
+
 
 ## Detect number of CPUs and use min(N_CPUS, 8) for jobs
 N_CPUS=$(nproc)
@@ -29,9 +42,11 @@ if [[ ! -d $WORKDIR ]]; then
 	echo "Could not find working directory: $WORKDIR, exiting. Please make sure the working directory exists"
 	exit 1
 else
-	shift $((OPTIND-1))
-	[ "$1" = "--" ] && shift
-	echo "GENOME=$GENOME, WORKDIR='$WORKDIR'"
+	## Convert to absolute paths
+	GENOME=$(readlink -e $GENOME)
+	WORKDIR=$(readlink -e $WORKDIR)
+	echo "GENOME=$GENOME"
+	echo "WORKDIR=$WORKDIR"
 fi
 
 ## Check $GENOME
@@ -83,6 +98,19 @@ is_paired() {
 	fi
 }
 
+dump_sra() {
+	# function to dump sra to fastq file with auto-detecting 
+	# whether reads are from single-end or paired-end
+	local sra="$1"
+	if is_paired $sra; then
+		echo "$sra is detected as paired-end sequencing reads"
+		# Note that paired-end sequencing reads should be dumped into two fastq files
+		fastq-dump --gzip -I --split-files -O paired_fastqs "$sra"
+	else
+		echo "$sra is detected as single-end sequencing reads"
+		fastq-dump --gzip -O fastqs "$sra"
+	fi
+}
 
 cd $WORKDIR
 
@@ -97,16 +125,11 @@ mkdir -p featureCount_output
 ########## Step 1: .sra -> .fastq ##########
 ## Dump .sra to .fastq
 echo "Dumping .sra files to .fastq.gz files"
-for sra in $(ls SRR*/*.sra); do
-	if is_paired $sra; then
-		echo "$sra is detected as paired-end sequencing reads"
-		# Note that paired-end sequencing reads should be dumped into two fastq files
-		fastq-dump --gzip -I --split-files -O paired_fastqs $sra
-	else
-		echo "$sra is detected as single-end sequencing reads"
-		fastq-dump --gzip -O fastqs $sra
-	fi
-done
+## Dump in parallel using xargs
+export -f is_paired
+export -f dump_sra
+find SRR*/*.sra | xargs --max-args=1 --max-procs=$N_CPUS -I {} bash -c 'dump_sra "$@"' _ {}
+
 
 ########## Step 2: QC, align and assemble sequencing reads ##########
 ## Align and assemble single-end sequencing reads

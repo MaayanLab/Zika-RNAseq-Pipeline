@@ -5,22 +5,35 @@
 
 
 ########## Step 0: check command line args and make sure files exist ##########
-## Parse command line args
-OPTIND=1
 ## Initialize variables with default values:
 WORKDIR="data/"
 GENOME="$HOME/genomes/Homo_sapiens/UCSC/hg19"
-while getopts "hgw:" opt; do
-	case "$opt" in
-		h)  echo "Usage: ./analyze_fastq.sh -g <GENOME> -w <WORKDIR>"
-			exit
-			;;
-		g)  GENOME=$OPTARG
-			;;
-		w)  WORKDIR=$OPTARG
-			;;
+## Parse command line args
+while [[ $# -gt 0 ]]; do
+	key="$1"
+	case $key in
+		-g|--genome)
+		GENOME="$2"
+		shift # past argument
+		;;
+		-w|--workdir)
+		WORKDIR="$2"
+		shift # past argument
+		;;
+		-h|--help)
+		echo "Usage: ./analyze_fastq.sh -g <GENOME> -w <WORKDIR>"
+		exit
+		;;
+		*)
+		# unknown option
+		echo "Unknown option: $key, exiting."
+		echo "Usage: ./analyze_fastq.sh -g <GENOME> -w <WORKDIR>"
+		exit
+		;;
 	esac
+	shift # past argument or value  
 done
+
 
 ## Detect number of CPUs and use min(N_CPUS, 8) for jobs
 N_CPUS=$(nproc)
@@ -31,9 +44,11 @@ if [[ ! -d $WORKDIR ]]; then
 	echo "Could not find working directory: $WORKDIR, exiting. Please make sure the working directory exists"
 	exit 1
 else
-	shift $((OPTIND-1))
-	[ "$1" = "--" ] && shift
-	echo "GENOME=$GENOME, WORKDIR='$WORKDIR'"
+	## Convert to absolute paths
+	GENOME=$(readlink -e $GENOME)
+	WORKDIR=$(readlink -e $WORKDIR)
+	echo "GENOME=$GENOME"
+	echo "WORKDIR=$WORKDIR"
 fi
 
 ## Check $GENOME
