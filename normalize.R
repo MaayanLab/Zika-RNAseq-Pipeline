@@ -1,4 +1,8 @@
-setwd('data/')
+WORKDIR <- 'data/'
+args <- commandArgs(trailingOnly = TRUE)
+WORKDIR <- args[1]
+cat('Setting WORKDIR to:', WORKDIR, '\n' )
+setwd(WORKDIR)
 library(edgeR)
 
 fns <- system2('ls', args = 'featureCount_output/*.txt', stdout = T)

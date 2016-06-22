@@ -7,6 +7,8 @@ ADD . /notebook
 
 # Set the default directory where CMD will execute
 WORKDIR /notebook
+# Set environment variable
+ENV HOME /notebook
 
 # Install additional python packages
 RUN pip2 install -r requirements.txt 

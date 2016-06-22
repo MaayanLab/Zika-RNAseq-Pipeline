@@ -1,6 +1,8 @@
 #!/bin/bash
-# This script start the pipeline from .sra files assuming 
-# .sra files are located in SRR*/SRR*.sra relative to WORKDIR.
+# This script start the pipeline from .fastq.gz files assuming 
+# all single-end.fastq.gz files are located in fastqs/ relative to $WORKDIR and
+# all paired-end.fastq.gz files are located in paired_fastqs/ relative to $WORKDIR.
+
 
 ########## Step 0: check command line args and make sure files exist ##########
 ## Parse command line args
@@ -10,7 +12,7 @@ WORKDIR="data/"
 GENOME="$HOME/genomes/Homo_sapiens/UCSC/hg19"
 while getopts "hgw:" opt; do
 	case "$opt" in
-		h)  echo "Usage: ./analyze_sra.sh -g <GENOME> -w <WORKDIR>"
+		h)  echo "Usage: ./analyze_fastq.sh -g <GENOME> -w <WORKDIR>"
 			exit
 			;;
 		g)  GENOME=$OPTARG
@@ -64,49 +66,14 @@ if [ ! -d $STAR_INDEX ]; then
 fi
 
 
-is_paired() {
-	# function to examine whether a .sra file is paired-end sequencing 
-	# ref: https://www.biostars.org/p/139422/
-	local SRA="$1"
-	local x=$(
-		fastq-dump -I -X 1 -Z --split-spot "$SRA" 2>/dev/null \
-		| awk '{if(NR % 2 == 1) print substr($1,length($1),1)}' \
-		| uniq \
-		| wc -l
-	)
-	# echo $SRA $x
-	# $x should be 2 if paired-end, 1 if single-end
-	if [ $x == 2 ]; then
-		return 0 # true
-	else
-		return 1 # false
-	fi
-}
-
 
 cd $WORKDIR
 
 ## create dirs if not exists
-mkdir -p fastqs
-mkdir -p paired_fastqs
 mkdir -p fastQC_output
 mkdir -p star_output
 mkdir -p featureCount_output
 
-
-########## Step 1: .sra -> .fastq ##########
-## Dump .sra to .fastq
-echo "Dumping .sra files to .fastq.gz files"
-for sra in $(ls SRR*/*.sra); do
-	if is_paired $sra; then
-		echo "$sra is detected as paired-end sequencing reads"
-		# Note that paired-end sequencing reads should be dumped into two fastq files
-		fastq-dump --gzip -I --split-files -O paired_fastqs $sra
-	else
-		echo "$sra is detected as single-end sequencing reads"
-		fastq-dump --gzip -O fastqs $sra
-	fi
-done
 
 ########## Step 2: QC, align and assemble sequencing reads ##########
 ## Align and assemble single-end sequencing reads
