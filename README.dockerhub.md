@@ -5,6 +5,8 @@ _Zichen Wang_ and _Avi Ma'ayan_
 _BD2K-LINCS Data Coordination and Integration Center (DCIC)_
 _Icahn School of Medicine at Mount Sinai, New York, NY 10029 USA_
 
+[![DOI](https://zenodo.org/badge/22891/MaayanLab/Zika-RNAseq-Pipeline.svg)](https://zenodo.org/badge/latestdoi/22891/MaayanLab/Zika-RNAseq-Pipeline)
+
 ## Guide to downloading and running this Docker image
 
 ### Step 1: Install Docker
