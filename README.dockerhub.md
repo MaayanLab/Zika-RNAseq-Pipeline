@@ -11,7 +11,7 @@ _Icahn School of Medicine at Mount Sinai, New York, NY 10029 USA_
 
 ### Step 1: Install Docker
 
-To download and run this Docker image, you first need to set up Docker on your machine. The easiest way to start with Docker is to install the [Docker Toolbox](https://www.docker.com/products/docker-toolbox) by simply downloading and clicking the installer which is available for both Mac OSX and Windows. For Linux users, follow the instruction [here](https://docs.docker.com/linux/step_one/). 
+To download and run this Docker image, you first need to set up Docker on your machine. The easiest way to start with Docker is to install the [Docker Toolbox](https://www.docker.com/products/docker-toolbox) by simply downloading and clicking the installer which is available for both Mac OSX and Windows. For Linux users, follow the instructions [here](https://docs.docker.com/linux/step_one/). 
 
 ### Step 2: Download and run the Docker image
 
@@ -23,9 +23,10 @@ The image can be downloaded and executed through the CLI of Docker's `Docker Qui
 	```
 	$ docker pull maayanlab/zika
 	```
-2. Run the Docker image
+2. Run the Docker image. The Docker container requires host to mount two directories as data volumes: the reference genome directory (`/notebook/genomes`) and the data directory (`/notebook/data`). This can be done by specifying the -v tag when running Docker:
+	`-v /host/path/to/genomes:/notebook/genomes -v /host/path/to/data:/notebook/data`
 	```
-	$ docker run -d -p 80:8888 -e "PASSWORD=YourPassword" -e "USE_HTTP=1" maayanlab/zika
+	$ docker run -d -p 80:8888 -e "PASSWORD=YourPassword" -e "USE_HTTP=1" -v /host/path/to/genomes:/notebook/genomes -v /host/path/to/data:/notebook/data maayanlab/zika
 	```
 3. Get the IP of your Docker machine:   
 	```
@@ -37,6 +38,8 @@ More detailed instructions on how to open the Docker Quickstart Terminal are ava
 
 
 #### Option 2: Through the Graphical User Interface (GUI)
+
+**Note:** Kitematic currently does not support mounting host directories as data volumes of the Docker container. Therefore it is suggested to use CLI to run the Docker image if you need to analyze new data with this pipeline.
 
 1. Open [Kitematic](https://www.docker.com/products/docker-kitematic)
 2. Search for maayanlab/zika in the search box and download the Docker image
