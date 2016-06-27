@@ -150,11 +150,11 @@ for fq in $(ls); do
 		--outFileNamePrefix ../star_output/$basename \
 		--readFilesIn $fq \
 		--readFilesCommand zcat \
-		--outSAMtype BAM SortedByCoordinate \
+		--outSAMtype BAM Unsorted \
 		--outReadsUnmapped Fastx \
 		--outSAMmode Full
 
-	suffix="Aligned.sortedByCoord.out.bam"
+	suffix="Aligned.out.bam"
 	outname="$basename.count.txt"
 	bam="../star_output/$basename$suffix"
 	featureCounts \
@@ -170,8 +170,8 @@ done
 cd ../paired_fastqs
 for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	echo $basename
-	fq1="_1.fastq"
-	fq2="_2.fastq"
+	fq1="_1.fastq.gz"
+	fq2="_2.fastq.gz"
 	fq1=$basename$fq1
 	fq2=$basename$fq2
 	echo "Performing FastQC for $basename"
@@ -187,11 +187,11 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 		--outFileNamePrefix ../star_output/$basename \
 		--readFilesIn $fq1 $fq2 \
 		--readFilesCommand zcat \
-		--outSAMtype BAM SortedByCoordinate \
+		--outSAMtype BAM Unsorted \
 		--outReadsUnmapped Fastx \
 		--outSAMmode Full
 
-	suffix="Aligned.sortedByCoord.out.bam"
+	suffix="Aligned.out.bam"
 	outname="$basename.count.txt"
 	bam="../star_output/$basename$suffix"
 	featureCounts \
