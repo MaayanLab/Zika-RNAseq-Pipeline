@@ -22,7 +22,7 @@ for (fn in fns) {
 	}
 }
 
-cat('Finished reading featureCount into data.frame with shape: ', dim(counts.df) )
+cat('Finished reading featureCount into data.frame with shape: ', dim(counts.df), '\n' )
 
 write.csv(counts.df, file='featureCounts_matrix.csv', row.names=F)
 write.csv(lengths.df, file='featureCounts_gene_lengths.csv', row.names=F)
@@ -32,16 +32,16 @@ gene.lengths <- lengths.df[[2]]
 # make a matrix of counts
 count.mat <- as.matrix(counts.df[2:length(counts.df)])
 
-## Calculate RPKM
-d <- DGEList(counts=count.mat)
-d$genes$Length <- gene.lengths
-rpkm.mat <- rpkm(d)
-rownames(rpkm.mat) <- genes
-write.csv(rpkm.mat, file="repRpkmMatrix_featureCounts.csv", row.names=T)
-cat('\nRPKM matrix written to "repRpkmMatrix_featureCounts.csv"')
-
 ## Calculate CPM
+d <- DGEList(counts=count.mat)
 cpm.mat <- cpm(d)
 rownames(cpm.mat) <- genes
 write.csv(cpm.mat, file="repCpmMatrix_featureCounts.csv", row.names=T)
 cat('\nCPM matrix file written to "repCpmMatrix_featureCounts.csv"')
+
+## Calculate RPKM
+d$genes$Length <- gene.lengths
+rpkm.mat <- rpkm(d, gene.lengths)
+rownames(rpkm.mat) <- genes
+write.csv(rpkm.mat, file="repRpkmMatrix_featureCounts.csv", row.names=T)
+cat('\nRPKM matrix written to "repRpkmMatrix_featureCounts.csv"')
