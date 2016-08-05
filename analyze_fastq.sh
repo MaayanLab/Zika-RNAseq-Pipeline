@@ -91,73 +91,79 @@ mkdir -p featureCount_output
 
 
 ########## Step 2: QC, align and assemble sequencing reads ##########
-## Align and assemble single-end sequencing reads
 echo "Started to align reads to the genome and assemble transcriptome"
-cd fastqs
-for fq in $(ls); do
-	basename=$(echo $fq | cut -f1 -d '.')
-	echo "Performing FastQC for $basename"
-	fastqc $fq -o ../fastQC_output
+if [[ -d fastqs ]]; then
+	## Align and assemble single-end sequencing reads
+	cd fastqs
+	for fq in $(ls); do
+		basename=$(echo $fq | cut -f1 -d '.')
+		echo "Performing FastQC for $basename"
+		fastqc $fq -o ../fastQC_output
 
-	echo "Aligning reads from $basename to the reference genome"
-	STAR \
-		--genomeDir $STAR_INDEX \
-		--sjdbGTFfile $GENOME_GTF \
-		--runThreadN $N_CPUS \
-		--outSAMstrandField intronMotif \
-		--outFilterIntronMotifs RemoveNoncanonical \
-		--outFileNamePrefix ../star_output/$basename \
-		--readFilesIn $fq \
-		--readFilesCommand zcat \
-		--outSAMtype BAM SortedByCoordinate \
-		--outReadsUnmapped Fastx \
-		--outSAMmode Full
+		echo "Aligning reads from $basename to the reference genome"
+		STAR \
+			--genomeDir $STAR_INDEX \
+			--sjdbGTFfile $GENOME_GTF \
+			--runThreadN $N_CPUS \
+			--outSAMstrandField intronMotif \
+			--outFilterIntronMotifs RemoveNoncanonical \
+			--outFileNamePrefix ../star_output/$basename \
+			--readFilesIn $fq \
+			--readFilesCommand zcat \
+			--outSAMtype BAM SortedByCoordinate \
+			--outReadsUnmapped Fastx \
+			--outSAMmode Full
 
-	suffix="Aligned.sortedByCoord.out.bam"
-	outname="$basename.count.txt"
-	bam="../star_output/$basename$suffix"
-	featureCounts \
-		-T $N_CPUS \
-		-t exon \
-		-g gene_id \
-		-a $GENOME_GTF \
-		-o ../featureCount_output/$outname \
-		$bam
-done
+		suffix="Aligned.sortedByCoord.out.bam"
+		outname="$basename.count.txt"
+		bam="../star_output/$basename$suffix"
+		featureCounts \
+			-T $N_CPUS \
+			-t exon \
+			-g gene_id \
+			-a $GENOME_GTF \
+			-o ../featureCount_output/$outname \
+			$bam
+	done
+	cd ..
+fi	
 
-## Align and assemble paired-end sequencing reads
-cd ../paired_fastqs
-for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
-	echo $basename
-	fq1="_1.fastq"
-	fq2="_2.fastq"
-	fq1=$basename$fq1
-	fq2=$basename$fq2
-	echo "Performing FastQC for $basename"
-	fastqc $fq1 -o ../fastQC_output
-	fastqc $fq2 -o ../fastQC_output
-	echo "Aligning reads from $basename to the reference genome"
-	STAR \
-		--genomeDir $STAR_INDEX \
-		--sjdbGTFfile $GENOME_GTF \
-		--runThreadN $N_CPUS \
-		--outSAMstrandField intronMotif \
-		--outFilterIntronMotifs RemoveNoncanonical \
-		--outFileNamePrefix ../star_output/$basename \
-		--readFilesIn $fq1 $fq2 \
-		--readFilesCommand zcat \
-		--outSAMtype BAM SortedByCoordinate \
-		--outReadsUnmapped Fastx \
-		--outSAMmode Full
+if [[ -d paired_fastqs ]]; then
+	## Align and assemble paired-end sequencing reads
+	cd paired_fastqs
+	for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
+		echo $basename
+		fq1="_1.fastq"
+		fq2="_2.fastq"
+		fq1=$basename$fq1
+		fq2=$basename$fq2
+		echo "Performing FastQC for $basename"
+		fastqc $fq1 -o ../fastQC_output
+		fastqc $fq2 -o ../fastQC_output
+		echo "Aligning reads from $basename to the reference genome"
+		STAR \
+			--genomeDir $STAR_INDEX \
+			--sjdbGTFfile $GENOME_GTF \
+			--runThreadN $N_CPUS \
+			--outSAMstrandField intronMotif \
+			--outFilterIntronMotifs RemoveNoncanonical \
+			--outFileNamePrefix ../star_output/$basename \
+			--readFilesIn $fq1 $fq2 \
+			--readFilesCommand zcat \
+			--outSAMtype BAM SortedByCoordinate \
+			--outReadsUnmapped Fastx \
+			--outSAMmode Full
 
-	suffix="Aligned.sortedByCoord.out.bam"
-	outname="$basename.count.txt"
-	bam="../star_output/$basename$suffix"
-	featureCounts \
-		-T $N_CPUS \
-		-t exon \
-		-g gene_id \
-		-a $GENOME_GTF \
-		-o ../featureCount_output/$outname \
-		$bam
-done
+		suffix="Aligned.sortedByCoord.out.bam"
+		outname="$basename.count.txt"
+		bam="../star_output/$basename$suffix"
+		featureCounts \
+			-T $N_CPUS \
+			-t exon \
+			-g gene_id \
+			-a $GENOME_GTF \
+			-o ../featureCount_output/$outname \
+			$bam
+	done
+	cd ..
+fi
