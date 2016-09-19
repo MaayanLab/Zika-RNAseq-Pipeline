@@ -110,11 +110,11 @@ if [[ -d fastqs ]]; then
 			--outFileNamePrefix ../star_output/$basename \
 			--readFilesIn $fq \
 			--readFilesCommand zcat \
-			--outSAMtype BAM SortedByCoordinate \
+			--outSAMtype BAM Unsorted \
 			--outReadsUnmapped Fastx \
 			--outSAMmode Full
 
-		suffix="Aligned.sortedByCoord.out.bam"
+		suffix="Aligned.out.bam"
 		outname="$basename.count.txt"
 		bam="../star_output/$basename$suffix"
 		featureCounts \
@@ -150,11 +150,11 @@ if [[ -d paired_fastqs ]]; then
 			--outFileNamePrefix ../star_output/$basename \
 			--readFilesIn $fq1 $fq2 \
 			--readFilesCommand zcat \
-			--outSAMtype BAM SortedByCoordinate \
+			--outSAMtype BAM Unsorted \
 			--outReadsUnmapped Fastx \
 			--outSAMmode Full
 
-		suffix="Aligned.sortedByCoord.out.bam"
+		suffix="Aligned.out.bam"
 		outname="$basename.count.txt"
 		bam="../star_output/$basename$suffix"
 		featureCounts \
