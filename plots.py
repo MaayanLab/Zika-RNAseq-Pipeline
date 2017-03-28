@@ -14,6 +14,16 @@ from itertools import combinations
 from matplotlib import rcParams
 rcParams['pdf.fonttype'] = 42 ## Output Type 3 (Type3) or Type 42 (TrueType)
 rcParams['font.sans-serif'] = 'Arial'
+from matplotlib_venn import venn2, venn3
+
+def plot_venn(t1=None, t2=None, t3=None, ax=None, set_colors=('r', 'b', 'k')):
+	"""input: 2 or 3 tuples: (list/set, name_to_display) """
+	assert len(t1) == len(t2) == 2
+	if t3:
+		venn3( [set(t[0]) for t in [t1,t2,t3]], tuple( ['%s\n(%s)'%(t[1], len(set(t[0])) ) for t in [t1,t2,t3]]) , set_colors=set_colors, alpha=0.5,ax=ax)
+	else:
+		venn2( [set(t[0]) for t in [t1,t2]], tuple( ['%s\n(%s)'%(t[1], len(set(t[0])) ) for t in [t1,t2]]), set_colors=set_colors[0:2],alpha=0.5, ax=ax)
+
 
 COLORS8 = [
 '#1F77B4',

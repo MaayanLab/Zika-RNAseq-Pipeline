@@ -408,6 +408,45 @@ def PCA_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep=
 	fig.tight_layout()
 	plt.show()
 
+def PCA_plot2(fpkmMatrix, color_by, shape_by, 
+		standardize=3, log=True, legend_loc='best', legend_size=14):
+	variance_explained, pca_transformed = perform_PCA(fpkmMatrix, standardize=standardize, log=log)
+
+	fig = plt.figure(figsize=(8,8))
+	ax = fig.add_subplot(111)
+	scatter_proxies = []
+	labels_show = [] # for legend and scatter proxies
+	color_uniq = list(set(color_by))
+	shape_uniq = list(set(shape_by))
+
+	colors = COLORS10
+	if len(color_uniq) > 10:
+		colors = COLORS20
+	if len(color_uniq) > 20:
+		r = lambda: random.randint(0,255)
+		colors = ['#%02X%02X%02X' % (r(),r(),r()) for i in range(len(color_uniq))]
+	
+	shapes = 'osv^phd'
+
+	for row, label_c, label_s in zip(pca_transformed, color_by, shape_by):
+		idx_c = color_uniq.index(label_c)
+		idx_s = shape_uniq.index(label_s)
+		ax.scatter(row[0], row[1], label='label', 
+			color=colors[idx_c], s=50, marker=shapes[idx_s])
+		label = '%s-%s' %(label_c, label_s)
+		if label not in labels_show:
+			labels_show.append(label)
+			scatter1_proxy = Line2D([0],[0], ls="none", c=colors[idx_c], marker=shapes[idx_s])
+			scatter_proxies.append(scatter1_proxy)
+
+	ax.legend(scatter_proxies, labels_show, numpoints=1, frameon=True,loc=legend_loc, prop={'size':legend_size})
+	ax.set_xlabel('PC1 (%.2f'%variance_explained[0] + '%' + ' variance captured)', fontsize=20)
+	ax.set_ylabel('PC2 (%.2f'%variance_explained[1] + '%' + ' variance captured)', fontsize=20)
+	enlarge_tick_fontsize(ax, 14)
+	fig.tight_layout()
+	plt.show()
+	return
+
 def PCA_3d_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep='_', legend_loc='best', legend_size=14):
 	# standardize: whether to a zscore transformation on the log10 transformed FPKM
 	pca = PCA(n_components=None)
@@ -461,3 +500,22 @@ def PCA_3d_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, s
 	fig.tight_layout()
 	plt.show()
 
+
+from statsmodels.sandbox.stats.multicomp import multipletests
+from scipy.stats import f_oneway
+def row_wise_anova(mat, categories, method='fdr_bh'):
+	'''Apply one-way ANOVA to each row of mat, and adjust p-values.
+	'''
+	uniq_cats = np.unique(categories)
+	pvals = np.ones(mat.shape[0], dtype=float)
+	masks = [np.in1d(categories, [cat]) for cat in uniq_cats]
+	for i in range(mat.shape[0]):
+		row = mat[i]
+		grouped_row = [ row[mask] for mask in masks ]
+		fval, pval = f_oneway(*grouped_row)
+		pvals[i] = pval
+
+	_, qvals, _, _ = multipletests(pvals, method=method)
+	return pvals, qvals
+
+	
