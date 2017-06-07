@@ -342,10 +342,7 @@ def manifold_plot(man, fpkmMatrix, samples, standardize=3, log=True, show_text=F
 	ax.set_ylabel('M2', fontsize=20)
 	enlarge_tick_fontsize(ax, 14)
 	fig.tight_layout()
-	plt.show()
-
-
-	return
+	return fig
 
 
 def perform_PCA(fpkmMatrix, standardize=3, log=True):
@@ -406,7 +403,7 @@ def PCA_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep=
 	ax.set_ylabel('PC2 (%.2f'%variance_explained[1] + '%' + ' variance captured)', fontsize=20)
 	enlarge_tick_fontsize(ax, 14)
 	fig.tight_layout()
-	plt.show()
+	return fig
 
 def PCA_plot2(fpkmMatrix, color_by, shape_by, 
 		standardize=3, log=True, legend_loc='best', legend_size=14):
@@ -444,8 +441,7 @@ def PCA_plot2(fpkmMatrix, color_by, shape_by,
 	ax.set_ylabel('PC2 (%.2f'%variance_explained[1] + '%' + ' variance captured)', fontsize=20)
 	enlarge_tick_fontsize(ax, 14)
 	fig.tight_layout()
-	plt.show()
-	return
+	return fig
 
 def PCA_3d_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, sep='_', legend_loc='best', legend_size=14):
 	# standardize: whether to a zscore transformation on the log10 transformed FPKM
@@ -498,7 +494,7 @@ def PCA_3d_plot(fpkmMatrix, samples, standardize=3, log=True, show_text=False, s
 	ax.set_zlabel('PC3 (%.2f'%variance_explained[2] + '%' + ' variance captured)', fontsize=16)
 	ax.legend(scatter_proxies, labels_show, numpoints=1, frameon=True,loc='upper left',prop={'size':legend_size})
 	fig.tight_layout()
-	plt.show()
+	return fig
 
 
 from statsmodels.sandbox.stats.multicomp import multipletests
