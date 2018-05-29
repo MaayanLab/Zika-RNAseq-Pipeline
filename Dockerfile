@@ -28,7 +28,7 @@ RUN apt-get update -qq && apt-get install -y \
 RUN R -e 'source("http://bioconductor.org/biocLite.R"); biocLite("edgeR");'
 
 
-# Install SRA-tookit, fastQC STAR, featureCounts
+# Install SRA-tookit, fastQC, STAR, featureCounts
 RUN wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.6.2/sratoolkit.2.6.2-ubuntu64.tar.gz
 RUN tar zxvf sratoolkit.2.6.2-ubuntu64.tar.gz
 RUN ln -s /notebook/sratoolkit.2.6.2-ubuntu64/bin/* /usr/local/bin/
@@ -42,6 +42,7 @@ RUN tar zxvf STAR_2.4.1c.tar.gz
 RUN cd STAR-STAR_2.4.1c/source && make STAR
 RUN ln -s /notebook/STAR-STAR_2.4.1c/bin/Linux_x86_64/STAR /usr/local/bin/
 
+RUN wget -O subread-1.4.6-p2-Linux-x86_64.tar.gz --no-check-certificate https://sourceforge.net/projects/subread/files/subread-1.4.6-p2/subread-1.4.6-p2-Linux-x86_64.tar.gz
 RUN tar zxvf subread-1.4.6-p2-Linux-x86_64.tar.gz
 RUN ln -s /notebook/subread-1.4.6-p2-Linux-x86_64/bin/* /usr/local/bin/
 
