@@ -31,7 +31,13 @@ We have created a Docker image ([maayanlab/zika](https://hub.docker.com/r/maayan
 			```
 		3. Run the Docker image   
 			```
-			$ docker run -d -p 80:8888 -e "PASSWORD=YourPassword" -e "USE_HTTP=1" maayanlab/zika
+			$ docker run -d -p 80:8888 \
+				-e "PASSWORD=YourPassword" \
+				-e "USE_HTTP=1" \
+				--cpmset-cpus="0-3" \ # number of CPUs assigned for the container
+				-v /host/path/to/data:/notebook/data \ # mount the host volume to the container
+				-v /host/path/to/genome:/notebook/genome \
+				maayanlab/zika
 			```
 		4. Get the IP of your Docker machine:   
 			```
@@ -41,7 +47,7 @@ We have created a Docker image ([maayanlab/zika](https://hub.docker.com/r/maayan
 			```
 			$ boot2docker ip
 			```
-		5. Open a browser and go to http://your.docker.ip
+		5. Open a browser and go to http://your.docker.ip/zika
 
 	2. Through Graphical User Interface (GUI)
 		1. Install Docker Toolbox following the instructions [here](https://www.docker.com/products/docker-toolbox) 

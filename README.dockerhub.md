@@ -26,13 +26,19 @@ The image can be downloaded and executed through the CLI of Docker's `Docker Qui
 2. Run the Docker image. The Docker container requires host to mount two directories as data volumes: the reference genome directory (`/notebook/genomes`) and the data directory (`/notebook/data`). This can be done by specifying the -v tag when running Docker:
 	`-v /host/path/to/genomes:/notebook/genomes -v /host/path/to/data:/notebook/data`
 	```
-	$ docker run -d -p 80:8888 -e "PASSWORD=YourPassword" -e "USE_HTTP=1" -v /host/path/to/genomes:/notebook/genomes -v /host/path/to/data:/notebook/data maayanlab/zika
+	$ docker run -d -p 80:8888 \
+				-e "PASSWORD=YourPassword" \
+				-e "USE_HTTP=1" \
+				--cpmset-cpus="0-3" \ # number of CPUs assigned for the container
+				-v /host/path/to/data:/notebook/data \ # mount the host volume to the container
+				-v /host/path/to/genome:/notebook/genome \
+				maayanlab/zika
 	```
 3. Get the IP of your Docker machine:   
 	```
 	$ docker-machine ip
 	```
-4. Open a browser and go to http://your.docker-machine.ip and enter the password you set to run the RNA-Seq pipeline. 
+4. Open a browser and go to http://your.docker-machine.ip/zika and enter the password you set to run the RNA-Seq pipeline. 
 
 More detailed instructions on how to open the Docker Quickstart Terminal are available for [Mac OSX](https://docs.docker.com/mac/step_one/) and [Windows](https://docs.docker.com/windows/step_one/).
 

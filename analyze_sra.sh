@@ -6,6 +6,9 @@
 ## Initialize variables with default values:
 WORKDIR="data/"
 GENOME="$HOME/genomes/Homo_sapiens/UCSC/hg19"
+skip_qc=false
+n_cpus=8
+
 ## Parse command line args
 while [[ $# -gt 0 ]]; do
 	key="$1"
@@ -18,14 +21,28 @@ while [[ $# -gt 0 ]]; do
 		WORKDIR="$2"
 		shift # past argument
 		;;
+		-t|--cpus)
+		n_cpus="$2"
+		shift # past argument
+		;;        
+		--skip-qc)
+		skip_qc=true
+		shift # past argument
+		;;		
 		-h|--help)
 		echo "Usage: ./analyze_sra.sh -g <GENOME> -w <WORKDIR>"
+		echo "Options:"
+		echo "  --skip-qc: Skip fastQC steps for the fastq files"
+		echo "  -t, --cpus: Number of CPUs to use, default to 8"
 		exit
 		;;
 		*)
 		# unknown option
 		echo "Unknown option: $key, exiting."
 		echo "Usage: ./analyze_sra.sh -g <GENOME> -w <WORKDIR>"
+		echo "Options:"
+		echo "  --skip-qc: Skip fastQC steps for the fastq files"
+		echo "  -t, --cpus: Number of CPUs to use, default to 8"
 		exit
 		;;
 	esac
@@ -33,9 +50,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 
-## Detect number of CPUs and use min(N_CPUS, 8) for jobs
+## Detect number of CPUs and use min(N_CPUS, n_cpus) for jobs
 N_CPUS=$(nproc)
-N_CPUS=$(($N_CPUS>8?8:$N_CPUS))
+N_CPUS=$(($N_CPUS>n_cpus?n_cpus:$N_CPUS))
+echo "Number of CPUs to be used: $N_CPUS"
 
 ## Check $WORKDIR
 if [[ ! -d $WORKDIR ]]; then
@@ -137,8 +155,10 @@ echo "Started to align reads to the genome and assemble transcriptome"
 cd fastqs
 for fq in $(ls); do
 	basename=$(echo $fq | cut -f1 -d '.')
-	echo "Performing FastQC for $basename"
-	fastqc $fq -o ../fastQC_output
+	if [ "$skip_qc" = false ]; then
+		echo "Performing FastQC for $basename"
+		fastqc $fq -o ../fastQC_output
+	if
 
 	echo "Aligning reads from $basename to the reference genome"
 	STAR \
@@ -174,9 +194,11 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 	fq2="_2.fastq.gz"
 	fq1=$basename$fq1
 	fq2=$basename$fq2
-	echo "Performing FastQC for $basename"
-	fastqc $fq1 -o ../fastQC_output
-	fastqc $fq2 -o ../fastQC_output
+	if [ "$skip_qc" = false ]; then
+		echo "Performing FastQC for $basename"
+		fastqc $fq1 -o ../fastQC_output
+		fastqc $fq2 -o ../fastQC_output
+	fi
 	echo "Aligning reads from $basename to the reference genome"
 	STAR \
 		--genomeDir $STAR_INDEX \
