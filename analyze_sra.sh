@@ -158,7 +158,7 @@ for fq in $(ls); do
 	if [ "$skip_qc" = false ]; then
 		echo "Performing FastQC for $basename"
 		fastqc $fq -o ../fastQC_output
-	if
+	fi
 
 	echo "Aligning reads from $basename to the reference genome"
 	STAR \

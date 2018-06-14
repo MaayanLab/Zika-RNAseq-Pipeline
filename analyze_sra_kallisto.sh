@@ -153,7 +153,7 @@ for fq in $(ls); do
 	if [ "$skip_qc" = false ]; then
 		echo "Performing FastQC for $basename"
 		fastqc $fq -o ../fastQC_output
-	if
+	fi
 
 	echo "Aligning reads from $basename to the reference genome"
 	kallisto quant \
@@ -176,7 +176,7 @@ for basename in $(ls | cut -f1 -d '_' | sort | uniq); do
 		echo "Performing FastQC for $basename"
 		fastqc $fq1 -o ../fastQC_output
 		fastqc $fq2 -o ../fastQC_output
-	if
+	fi
 
 	echo "Aligning reads from $basename to the reference genome"
 
