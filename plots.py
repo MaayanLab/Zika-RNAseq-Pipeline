@@ -14,6 +14,7 @@ from itertools import combinations
 from matplotlib import rcParams
 rcParams['pdf.fonttype'] = 42 ## Output Type 3 (Type3) or Type 42 (TrueType)
 rcParams['font.sans-serif'] = 'Arial'
+rcParams['lines.markersize'] = 4
 from matplotlib_venn import venn2, venn3
 
 def plot_venn(t1=None, t2=None, t3=None, ax=None, set_colors=('r', 'b', 'k')):
@@ -100,3 +101,21 @@ def enlarge_tick_fontsize(ax,fontsize):
 		tick.label.set_fontsize(fontsize)
 	for tick in ax.yaxis.get_major_ticks():
 		tick.label.set_fontsize(fontsize)
+
+def scatter_plot(coords, samples, sep='_', legend_size=14,
+	marker='o', alpha=0.8):
+
+	fig = plt.figure(figsize=(10,8))
+	ax = fig.add_subplot(111)
+	conditions = [s.split(sep)[0] for s in samples]
+	conditions_uniq = list(set(conditions))
+	for idx, condition in enumerate(conditions_uniq):
+		mask = np.in1d(conditions, [condition])
+		ax.scatter(coords[mask, 0], coords[mask, 1], label=condition, color=COLORS10[idx], 
+			marker=marker, alpha=alpha)
+
+	plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+	enlarge_tick_fontsize(ax, 14)
+	fig.tight_layout()
+	return fig
+

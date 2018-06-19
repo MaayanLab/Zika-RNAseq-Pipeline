@@ -23,7 +23,7 @@ from matplotlib import rcParams
 rcParams['pdf.fonttype'] = 42 ## Output Type 3 (Type3) or Type 42 (TrueType)
 rcParams['font.sans-serif'] = 'Arial'
 
-from plots import (COLORS10, COLORS20, COLORS20b, enlarge_tick_fontsize)
+from plots import (COLORS10, COLORS20, COLORS20b, enlarge_tick_fontsize, scatter_plot)
 
 ENRICHR_URL = 'http://amp.pharm.mssm.edu/Enrichr'
 
