@@ -1,4 +1,4 @@
-openpyxl == 2.2.5
+openpyxl == 2.4.2
 xlwt == 1.0.0
 xlrd
 urllib3 == 1.16
